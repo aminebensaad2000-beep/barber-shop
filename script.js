@@ -5,10 +5,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // --- حيلة الـ 24 ساعة ---
+        const lastBooking = localStorage.getItem('last_booking_time');
+        if (lastBooking && (Date.now() - lastBooking < 24 * 60 * 60 * 1000)) {
+            alert('عذراً، لا يمكنك الحجز مجدداً إلا بعد مرور 24 ساعة.');
+            return;
+        }
+
         const data = { id: Date.now().toString(), name: document.getElementById('name').value, phone: document.getElementById('phone').value, barber: document.getElementById('barber').value };
-        await fetch('/api/bookings', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});
-        alert('تم الحجز بنجاح!');
-        location.reload();
+        const res = await fetch('/api/bookings', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});
+        
+        if (res.ok) {
+            localStorage.setItem('last_booking_time', Date.now()); // قفل الحجز
+            alert('تم الحجز بنجاح!');
+            location.reload();
+        }
     });
 
     document.getElementById('admin-link').addEventListener('click', (e) => {
@@ -27,9 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookings = await res.json();
         ['حلاق 1', 'حلاق 2', 'حلاق 3'].forEach(b => {
             const sec = document.getElementById('section-' + b.replace(' ', ''));
+            const table = document.getElementById('table-' + b.replace(' ', ''));
             if(role !== 'all' && role !== b) sec.classList.add('hidden');
             else {
-                document.getElementById('table-' + b.replace(' ', '')).innerHTML = bookings.filter(book => book.barber === b).map(book => 
+                table.innerHTML = bookings.filter(book => book.barber === b).map(book => 
                     `<tr><td>${book.name}</td><td><a href="tel:${book.phone}">${book.phone}</a></td><td><button onclick="del('${book.id}')">حذف</button></td></tr>`
                 ).join('');
             }
