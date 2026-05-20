@@ -56,6 +56,44 @@
         </div>
     </div>
 
+    <div id="admin-page" class="page">
+        <div class="overlay" style="justify-content: flex-start; padding-top: 50px; overflow-y: auto;">
+            <h2>لوحة تحكم الحجوزات</h2>
+            
+            <div id="admin-login">
+                <form onsubmit="loginAdmin(event)" style="max-width: 300px;">
+                    <input type="password" id="admin-password" placeholder="أدخل كلمة المرور السرية" style="color: black;" required>
+                    <button type="submit" style="margin-top: 10px;">دخول</button>
+                </form>
+            </div>
+
+            <div id="admin-content" style="display: none; width: 100%; max-width: 800px;">
+                <div style="margin-bottom: 20px;">
+                    <button onclick="logoutAdmin()" style="background-color: #c0392b; padding: 8px 15px; font-size: 1rem;">تسجيل الخروج</button>
+                    <button onclick="loadReservations()" style="background-color: #2ecc71; padding: 8px 15px; font-size: 1rem; margin-right: 10px;">تحديث القائمة</button>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: #f39c12; color: black;">
+                            <th style="padding: 12px; text-align: center;">الزبون</th>
+                            <th style="padding: 12px; text-align: center;">رقم الهاتف</th>
+                            <th style="padding: 12px; text-align: center;">الحلاق</th>
+                            <th style="padding: 12px; text-align: center;">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservations-list" style="text-align: center;">
+                        </tbody>
+                </table>
+            </div>
+            
+            <button class="back-btn" onclick="nextPage('page1')" style="margin-top: 30px;">العودة للرئيسية</button>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 15px; background: rgba(0,0,0,0.8); width: 100%; position: fixed; bottom: 0; left: 0; z-index: 999;">
+        <a href="#admin-page" onclick="openAdminPage()" style="color: #7f8c8d; text-decoration: none; font-size: 0.85rem; font-family: sans-serif;">لوحة تحكم الإدارة</a>
+    </div>
+
     <script src="script.js"></script>
 </body>
-</html>
