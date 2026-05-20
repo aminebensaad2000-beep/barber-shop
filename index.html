@@ -3,101 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صالون الحلاقة الفاخر</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>صالون الحلاقة</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 20px; }
+        .container { background: #1e1e1e; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td, th { border: 1px solid #444; padding: 10px; }
+        .hidden { display: none; }
+        .btn { background: #d4af37; font-weight: bold; cursor: pointer; }
+    </style>
 </head>
 <body>
     <div id="booking-page" class="container">
-        <h1>مرحباً بك في صالون الحلاقة</h1>
-        <p class="subtitle">احجز موعدك الآن بسهولة</p>
-        
+        <h1>صالون الحلاقة</h1>
         <form id="booking-form">
-            <div class="form-group">
-                <label for="name">الاسم الكريم:</label>
-                <input type="text" id="name" required placeholder="أدخل اسمك الكامل">
-            </div>
-            
-            <div class="form-group">
-                <label for="phone">رقم الهاتف:</label>
-                <input type="tel" id="phone" required placeholder="0XXXXXXXXX">
-            </div>
-            
-            <div class="form-group">
-                <label for="barber">اختر الحلاق:</label>
-                <select id="barber" required>
-                    <option value="" disabled selected>اختر من القائمة...</option>
-                    <option value="حلاق 1">الحلاق الأول</option>
-                    <option value="حلاق 2">الحلاق الثاني</option>
-                    <option value="حلاق 3">الحلاق الثالث</option>
-                </select>
-            </div>
-            
+            <input type="text" id="name" required placeholder="الاسم الكريم">
+            <input type="tel" id="phone" required placeholder="رقم الهاتف">
+            <select id="barber" required>
+                <option value="حلاق 1">حلاق 1</option>
+                <option value="حلاق 2">حلاق 2</option>
+                <option value="حلاق 3">حلاق 3</option>
+            </select>
             <button type="submit" class="btn">تأكيد الحجز</button>
         </form>
-        <footer class="footer">
-            <a href="#admin-page" id="admin-link">لوحة تحكم الإدارة</a>
-        </footer>
+        <a href="#admin" id="admin-link" style="color: #888;">لوحة الإدارة</a>
     </div>
 
     <div id="admin-page" class="container hidden">
-        <div class="admin-header">
-            <h2>لوحة إدارة الحجوزات للصالون</h2>
-            <button id="logout-btn" class="btn-secondary">تسجيل الخروج</button>
-        </div>
-
-        <div class="barber-section">
-            <h3>📅 حجوزات الحلاق الأول</h3>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>رقم الهاتف (اضغط للاتصال)</th>
-                            <th>الإجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-barber1">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="barber-section">
-            <h3>📅 حجوزات الحلاق الثاني</h3>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>رقم الهاتف (اضغط للاتصال)</th>
-                            <th>الإجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-barber2">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="barber-section">
-            <h3>📅 حجوزات الحلاق الثالث</h3>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>رقم الهاتف (اضغط للاتصال)</th>
-                            <th>الإجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-barber3">
-                        </tbody>
-                </table>
-            </div>
-        </div>
+        <button onclick="location.reload()">خروج</button>
+        <div id="section-حلاق1"><h3>حجوزات حلاق 1</h3><table id="table-حلاق1"></table></div>
+        <div id="section-حلاق2"><h3>حجوزات حلاق 2</h3><table id="table-حلاق2"></table></div>
+        <div id="section-حلاق3"><h3>حجوزات حلاق 3</h3><table id="table-حلاق3"></table></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
