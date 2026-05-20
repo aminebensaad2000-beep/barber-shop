@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastBookingTime = localStorage.getItem('booking_timestamp');
         const currentTime = Date.now();
 
-        // فحص مرور 24 ساعة (24 ساعة * 60 دقيقة * 60 ثانية * 1000 مللي ثانية)
         if (lastBookingTime && (currentTime - lastBookingTime < 24 * 60 * 60 * 1000)) {
             alert('لقد قمت بالحجز بالفعل! لا يمكنك الحجز مجدداً إلا بعد مرور 24 ساعة.');
             return;
@@ -38,23 +37,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
             alert('تم تأكيد حجزك بنجاح! يرجى الالتزام بالموعد.');
-            localStorage.setItem('booking_timestamp', currentTime); // حفظ وقت الحجز الحالي
+            localStorage.setItem('booking_timestamp', currentTime);
             bookingForm.reset();
         } else {
             alert('حدث خطأ أثناء الحجز، يرجى المحاولة مرة أخرى.');
         }
     });
 
-    // 2. التحكم في الدخول بكلمة السر
+    // 2. فحص كلمات السر (للمالك وللحلاقين)
     function checkRoute() {
         if (window.location.hash === '#admin-page') {
-            const password = prompt('الرجاء إدخال كلمة المرور السرية للمالك:');
+            const password = prompt('الرجاء إدخال الرمز السري الخاص بك:');
+            
             if (password === '1234') {
+                // المالك يرى كل شيء
                 bookingPage.classList.add('hidden');
                 adminPage.classList.remove('hidden');
-                loadBookings();
+                loadBookings('all');
+            } else if (password === '1111') {
+                // الحلاق الأول يرى جدوله فقط
+                bookingPage.classList.add('hidden');
+                adminPage.classList.remove('hidden');
+                loadBookings('barber1');
+            } else if (password === '2222') {
+                // الحلاق الثاني يرى جدوله فقط
+                bookingPage.classList.add('hidden');
+                adminPage.classList.remove('hidden');
+                loadBookings('barber2');
+            } else if (password === '3333') {
+                // الحلاق الثالث يرى جدوله فقط
+                bookingPage.classList.add('hidden');
+                adminPage.classList.remove('hidden');
+                loadBookings('barber3');
             } else {
-                alert('كلمة المرور خاطئة!');
+                alert('الرمز السري خاطئ!');
                 window.location.hash = '';
             }
         } else {
@@ -74,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkRoute();
     });
 
-    // 3. جلب وتوزيع الحجوزات مع ميزة الاتصال التلقائي
-    async function loadBookings() {
+    // 3. جلب وتوزيع الحجوزات حسب الصلاحية
+    async function loadBookings(role) {
         const response = await fetch('/api/bookings');
         const bookings = await response.json();
 
@@ -83,9 +99,21 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBarber2.innerHTML = '';
         tableBarber3.innerHTML = '';
 
+        // إخفاء أو إظهار أقسام الحلاقين بناءً على من قام بالدخول
+        const section1 = tableBarber1.closest('.barber-section');
+        const section2 = tableBarber2.closest('.barber-section');
+        const section3 = tableBarber3.closest('.barber-section');
+
+        section1.classList.add('hidden');
+        section2.classList.add('hidden');
+        section3.classList.add('hidden');
+
+        if (role === 'all' || role === 'barber1') section1.classList.remove('hidden');
+        if (role === 'all' || role === 'barber2') section2.classList.remove('hidden');
+        if (role === 'all' || role === 'barber3') section3.classList.remove('hidden');
+
         bookings.forEach(booking => {
             const tr = document.createElement('tr');
-            // جعل رقم الهاتف عبارة عن رابط يتصل مباشرة عند الضغط عليه href="tel:number"
             tr.innerHTML = `
                 <td>${booking.name}</td>
                 <td><a href="tel:${booking.phone}" class="phone-link">📞 ${booking.phone}</a></td>
@@ -108,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('هل أنت متأكد من حذف هذا الحجز؟')) {
                     const delRes = await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
                     if (delRes.ok) {
-                        loadBookings();
+                        loadBookings(role); // إعادة التحميل بنفس الصلاحية
                     }
                 }
             });
