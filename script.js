@@ -1,18 +1,39 @@
-// عند تحميل الصفحة، نتحقق فوراً إن كان هذا الهاتف قد سجل من قبل
+// عند تحميل الصفحة، نتحقق فوراً إن كان الحظر قد انتهى أو ما زال سارياً
 document.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem("hasBooked") === "true") {
-        showAlreadyBookedPage();
-    }
+    checkBookingExpiry();
 });
 
 let selectedBarberName = "";
 
+function checkBookingExpiry() {
+    const hasBooked = localStorage.getItem("hasBooked");
+    const bookingTime = localStorage.getItem("bookingTime");
+
+    if (hasBooked === "true" && bookingTime) {
+        const currentTime = new Date().getTime(); // الوقت الحالي بالملي ثانية
+        const timeDifference = currentTime - parseInt(bookingTime); // الفارق الزمني
+        
+        // 48 ساعة بالملي ثانية = 48 * 60 * 60 * 1000
+        const fortyEightHours = 48 * 60 * 60 * 1000;
+
+        if (timeDifference >= fortyEightHours) {
+            // إذا مرت 48 ساعة أو أكثر، نقوم بإلغاء الحظر تلقائياً
+            localStorage.removeItem("hasBooked");
+            localStorage.removeItem("bookingTime");
+        } else {
+            // إذا لم تمر 48 ساعة بعد، نأخذه لصفحة الحظر مباشرة
+            showAlreadyBookedPage();
+        }
+    }
+}
+
 function nextPage(pageId) {
-    // إذا كان الشخص قد سجل سابقاً، نمنعه من التنقل ونتركه في صفحة الحظر
+    // نتحقق مجدداً قبل التنقل للتأكد
+    checkBookingExpiry();
     if (localStorage.getItem("hasBooked") === "true") {
-        showAlreadyBookedPage();
         return;
     }
+    
     const pages = document.querySelectorAll('.page');
     pages.forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
@@ -31,24 +52,23 @@ function submitForm(event) {
     
     console.log(`تم الحجز: (${selectedBarberName}) - العميل (${name}) - الهاتف (${phone})`);
     
-    // هنا السر: نحفظ في ذاكرة الهاتف أنه قام بالتسجيل بنجاح
+    // حفظ حالة الحجز مع تسجيل الوقت الحالي بدقة
     localStorage.setItem("hasBooked", "true");
+    localStorage.setItem("bookingTime", new Date().getTime().toString());
     
     document.getElementById('booking-form').reset();
     nextPage('page4');
 }
 
-// دالة خاصة لإظهار صفحة تخبر المستخدم أنه سجل بالفعل وتمنعه من الحجز مجدداً
 function showAlreadyBookedPage() {
     const pages = document.querySelectorAll('.page');
     pages.forEach(page => page.classList.remove('active'));
     
-    // نقوم بتعديل محتوى الصفحة الرابعة لتناسب حالة المحظور وتمنعه من العودة للرئيسية
     const successBox = document.querySelector('.success-box');
     if (successBox) {
         successBox.innerHTML = `
             <h2 style="color: #e74c3c;">! أنت مسجل بالفعل</h2>
-            <p>لقد قمت بإجراء حجز مسبق من هذا الهاتف. لا يمكنك الحجز أكثر من مرة.</p>
+            <p>لقد قمت بإجراء حجز مسبق من هذا الهاتف. يمكنك الحجز مجدداً بعد مرور 48 ساعة من حجزك السابق.</p>
         `;
     }
     document.getElementById('page4').classList.add('active');
