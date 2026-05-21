@@ -1,9 +1,6 @@
-body { 
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b09f6f');
-    background-size: cover; color: white; text-align: center; font-family: Arial, sans-serif; padding: 20px; 
-}
-.container { background: rgba(0,0,0,0.5); padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; }
-input, select, button { display: block; width: 90%; margin: 10px auto; padding: 12px; border-radius: 5px; border: none; }
-button { background: #d4af37; color: white; cursor: pointer; font-weight: bold; }
-table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-th, td { border: 1px solid #d4af37; padding: 10px; }
+body { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b09f6f'); background-size: cover; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
+.container { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; }
+input, select, button { display: block; width: 90%; margin: 10px auto; padding: 12px; }
+button { background: #d4af37; color: white; border: none; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; }
+td { border: 1px solid #d4af37; padding: 10px; }
