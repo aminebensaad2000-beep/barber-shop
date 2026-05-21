@@ -1,38 +1,30 @@
 const express = require('express');
 const cron = require('node-cron');
-const path = require('path');
 const app = express();
-
 app.use(express.json());
-app.use(express.static('.')); // ليقرأ ملفات الـ html
+app.use(express.static('.'));
 
-let patients = []; // قائمة الزبائن
+let patients = []; 
+let phoneRecords = new Set(); 
 
-// تصفير اللائحة يومياً الساعة 8 صباحاً بتوقيت الجزائر
-cron.schedule('0 8 * * *', () => { patients = []; }, { timezone: "Africa/Algiers" });
+// تصفير القوائم يومياً الساعة 8 صباحاً
+cron.schedule('0 8 * * *', () => { 
+    patients = []; 
+    phoneRecords.clear(); 
+}, { timezone: "Africa/Algiers" });
 
-// مسار تسجيل الزبون
 app.post('/book', (req, res) => {
-    const { name, barber } = req.body;
-    patients.push({ name, barber });
-    res.status(200).send("تم الحجز بنجاح");
+    if (phoneRecords.has(req.body.phone)) return res.send('عذراً، لا يمكن الحجز مرتين في نفس اليوم لنفس الرقم.');
+    patients.push(req.body);
+    phoneRecords.add(req.body.phone);
+    res.send('تم تسجيل حجزك بنجاح!');
 });
 
-// مسار التحقق من كلمة سر الحلاق
-app.post('/admin-login', (req, res) => {
-    const { password } = req.body;
+app.post('/admin-list', (req, res) => {
     const auth = { "0001": "أحمد", "0002": "ياسين", "0003": "صابر" };
-
-    if (auth[password]) {
-        const barberName = auth[password];
-        const myPatients = patients.filter(p => p.barber === barberName);
-        res.json({ name: barberName, patients: myPatients });
-    } else {
-        res.status(403).send("خطأ");
-    }
+    const name = auth[req.body.password];
+    if (!name) return res.status(403).send('خطأ: رقم سري غير صحيح');
+    res.json(patients.filter(p => p.barber === name));
 });
 
-// إرجاع قائمة الزبائن كاملة (إذا احتاجتها صفحة أخرى)
-app.get('/patients', (req, res) => res.json(patients));
-
-app.listen(3000, () => console.log('السيرفر يعمل...'));
+app.listen(3000);
