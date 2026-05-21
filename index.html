@@ -1,41 +1,18 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صالون الحلاقة</title>
-    <style>
-        body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 20px; }
-        .container { background: #1e1e1e; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        td, th { border: 1px solid #444; padding: 10px; }
-        .hidden { display: none; }
-        .btn { background: #d4af37; font-weight: bold; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div id="booking-page" class="container">
-        <h1>صالون الحلاقة</h1>
-        <form id="booking-form">
-            <input type="text" id="name" required placeholder="الاسم الكريم">
-            <input type="tel" id="phone" required placeholder="رقم الهاتف">
-            <select id="barber" required>
-                <option value="حلاق 1">حلاق 1</option>
-                <option value="حلاق 2">حلاق 2</option>
-                <option value="حلاق 3">حلاق 3</option>
-            </select>
-            <button type="submit" class="btn">تأكيد الحجز</button>
-        </form>
-        <a href="#admin" id="admin-link" style="color: #888;">لوحة الإدارة</a>
-    </div>
+<select id="barber">
+    <option value="أحمد">أحمد</option>
+    <option value="ياسين">ياسين</option>
+    <option value="صابر">صابر</option>
+</select>
+<input type="text" id="name" placeholder="اسمك الكريم">
+<button onclick="book()">حجز الموعد</button>
 
-    <div id="admin-page" class="container hidden">
-        <button onclick="location.reload()">خروج</button>
-        <div id="section-حلاق1"><h3>حجوزات حلاق 1</h3><table id="table-حلاق1"></table></div>
-        <div id="section-حلاق2"><h3>حجوزات حلاق 2</h3><table id="table-حلاق2"></table></div>
-        <div id="section-حلاق3"><h3>حجوزات حلاق 3</h3><table id="table-حلاق3"></table></div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+<a href="admin.html">دخول الحلاقين (الإدارة)</a>
+
+<script>
+async function book() {
+    const name = document.getElementById('name').value;
+    const barber = document.getElementById('barber').value;
+    await fetch('/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name, barber }) });
+    alert("تم التسجيل يا " + name);
+}
+</script>
