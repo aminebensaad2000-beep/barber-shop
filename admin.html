@@ -1,1 +1,30 @@
-
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>بوابة الحلاقين</title>
+</head>
+<body>
+    <div class="container">
+        <h3>بوابة الحلاقين</h3>
+        <input type="password" id="pass" placeholder="الرقم السري">
+        <button onclick="view()">عرض زبائني</button>
+        <div id="res"></div>
+    </div>
+    <script>
+        async function view() {
+            const pass = document.getElementById('pass').value;
+            const res = await fetch('/admin-list', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password: pass}) });
+            if(res.status === 403) return alert('رمز سري خاطئ!');
+            const list = await res.json();
+            document.getElementById('res').innerHTML = '<table><tr><th>الاسم</th><th>اتصال</th><th>حذف</th></tr>' + 
+            list.map(p => `<tr><td>${p.name}</td><td><a href="tel:${p.phone}">اتصل</a></td><td><button onclick="del('${p.phone}')">X</button></td></tr>`).join('') + '</table>';
+        }
+        async function del(phone) {
+            await fetch('/delete', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({phone, password: document.getElementById('pass').value}) });
+            view();
+        }
+    </script>
+</body>
+</html>
