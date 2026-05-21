@@ -1,18 +1,32 @@
-<select id="barber">
-    <option value="أحمد">أحمد</option>
-    <option value="ياسين">ياسين</option>
-    <option value="صابر">صابر</option>
-</select>
-<input type="text" id="name" placeholder="اسمك الكريم">
-<button onclick="book()">حجز الموعد</button>
-
-<a href="admin.html">دخول الحلاقين (الإدارة)</a>
-
-<script>
-async function book() {
-    const name = document.getElementById('name').value;
-    const barber = document.getElementById('barber').value;
-    await fetch('/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name, barber }) });
-    alert("تم التسجيل يا " + name);
-}
-</script>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><link rel="stylesheet" href="style.css"></head>
+<body>
+    <div class="container">
+        <h1>صالون الحلاقة</h1>
+        <input id="name" placeholder="الاسم الكريم">
+        <input id="phone" placeholder="رقم الهاتف">
+        <select id="barber">
+            <option>أحمد</option><option>ياسين</option><option>صابر</option>
+        </select>
+        <button onclick="book()">تسجيل الحجز</button>
+        <hr>
+        <h3>بوابة الحلاقين</h3>
+        <input type="password" id="pass" placeholder="الرقم السري">
+        <button onclick="view()">عرض زبائني</button>
+        <div id="res"></div>
+    </div>
+    <script>
+        async function book() {
+            const res = await fetch('/book', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:document.getElementById('name').value, phone:document.getElementById('phone').value, barber:document.getElementById('barber').value}) });
+            alert(await res.text());
+        }
+        async function view() {
+            const res = await fetch('/admin-list', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password:document.getElementById('pass').value}) });
+            if(res.status === 403) return alert('رقم سري خاطئ!');
+            const list = await res.json();
+            document.getElementById('res').innerHTML = '<table><tr><th>م</th><th>الاسم</th><th>اتصال</th></tr>' + list.map((p,i) => `<tr><td>${i+1}</td><td>${p.name}</td><td><a style="color:gold" href="tel:${p.phone}">اتصل</a></td></tr>`).join('') + '</table>';
+        }
+    </script>
+</body>
+</html>
